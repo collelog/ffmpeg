@@ -274,7 +274,7 @@ RUN  \
 		--enable-shared \
 		--enable-small \
 		--enable-version3 \
-		--extra-cflags="-I${PREFIX}/include" \
+		--extra-cflags="-I${PREFIX}/include -I/opt/vc/include/IL" \
 		--extra-ldflags="-L${PREFIX}/lib" \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
