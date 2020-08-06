@@ -1,0 +1,152 @@
+#!/bin/bash
+
+#  実行ファイルと必要な共有ライブラリを指定ディレクトリ以下に
+#  ディレクトリ階層はそのままコピーする。実行ファイルに対する共有ライブラリ
+#  やリンクファイルをlinuxのコマンドldd,readlinkにより検索を行い、
+#  検索で見つかったファイルに対しても関数で再帰してldd,readlinkを行う処理をする。
+#
+#  実行には'bash'が必要なのでalpine linux等'bash'が当初ない物には
+#  apk add bash で追加して使用する。alpine linuxのashでは動かない部分がある。
+#
+#  - 使い方 -
+#  実行ファイル名を１つ以上フルパスでファイルに書き込む
+#  #  ./extractlibrary [実行バイナリファイルのフルパスをリスト化したファイル名] [指定ディレクトリ]
+#  
+#  例      echo /bin/ls > binlist
+#          echo /bin/cp >> binlist
+#          ./extractlibrary binlist copydir
+#  以上で実行ファイルと実行に必要な共有ライブラリがcopydirディレクトリ以下に配置される
+#
+#  Copyright (C) 2020 kurukurumaware
+#  License: Apache License, Version 2.0
+#           MIT License
+
+LF="
+"
+if [ -z "$1" ]; then
+  printf "\033[31mError --  source and destination are missing\n\
+          extractlibrary [binay file list] [destination directory]\033[m\n"
+  exit 1
+fi
+if [ -z "$2" ]; then
+  printf "\033[31mError --  destination are missing\n\
+          extractlibrary [binay file list] [destination directory]\033[m\n"
+  exit 1
+fi
+
+var_no=0
+var_libraryPathList=""
+var_copydir=$2
+var_copydir=${var_copydir%/}
+
+# リンク先のパスを取得してvar_libPathとnot equalだった場合リストに加える
+function search_Link(){
+    local var_linkSource=$1
+    local var_linkPath=`readlink -f ${var_linkSource}`
+    if [[ "$var_linkPath" = "$var_linkSource" ]]; then
+        :
+    else
+        printf "found liink    : %s\n" $var_linkPath
+        if [[ "$var_libraryPathList" = *${var_linkPath}* ]]; then  #リンク先が既にリスト内にあるかチェック
+            :
+        else
+            # リストにリンク先も追加
+            var_libraryPathList="${var_libraryPathList}""${var_linkPath}"$LF
+            printf "\033[36madd link source: %s\033[m\n" $var_linkPath
+            search_Link $var_linkPath
+        fi
+    fi
+}
+
+function search_Library(){
+    local var_newList=""
+    local var_libList=`ldd  $1`
+    var_no=$(( $var_no+1 ))
+    printf "==============     %s     ==============\n" $1
+
+while read line; do
+    local var_libPath=${line#*=> }
+    var_libPath=${var_libPath% *}
+    if [[ "$var_libPath" = /* ]]; then
+        printf "found library  : %s\n" $var_libPath
+        if [[ "$var_libraryPathList" = *${var_libPath}* ]]; then #ライブラリが既にリスト内にあるかチェック
+            :
+        else
+            var_libraryPathList="${var_libraryPathList}""${var_libPath}"$LF
+            printf "\033[36madd path list  : %s\033[m\n" $var_libPath
+            # リンクがあればリンク先も追加
+            search_Link $var_libPath
+            search_Library $var_libPath
+        fi
+    else
+        printf "\033[33mdont add path  : %s\033[m\n" $var_libPath
+    fi
+  
+done << END
+    $var_libList
+END
+
+    var_no=$(( $var_no-1 ))
+    # echo $var_no
+
+}
+
+
+
+# 実行ファイルのリストを貰ってリスト行回数分ライブラリの検索を呼び出す
+function executFileListProcess(){
+
+    local executFileList=`cat $1`
+# バイナリファイルのパスのチェック
+while read line; do
+    if [ -n "$line" ]; then
+        if [ -e "$line" ]; then
+            :
+        else
+            printf "\033[31mError - ${line}\n        This path does not exist\033[m\n"
+            exit 1
+        fi
+        var_libraryPathList="${var_libraryPathList}""$line"$LF    
+    fi
+done << END
+$executFileList
+END
+
+# 1つづつバイナリファイルのパスを渡す
+while read line; do
+    local var_libPath=$line
+    if [ -n "$var_libPath" ]; then
+        search_Library $var_libPath
+        search_Link $var_libPath
+    fi
+done << END
+$executFileList
+END
+
+}
+
+
+# リストアップされたファイルを指定ディレクトリ以下にサブディレクトリ以下の
+# 構造をそのままコピー
+function ListCopy() {
+    var_sourceList=$1
+    var_destdir=$2
+    printf "\n=-=-=-=  Copy File List  =-=-=-=\n"
+
+while read var_source; do
+    if [ -n "$var_source" ]; then
+        printf "copy - ${var_source}  >  ${var_destdir}${var_source} \n" 
+        cp --archive --parents --no-dereference ${var_source} ${var_destdir}
+    fi
+done << END
+    $var_sourceList
+END
+    printf "\n"
+}
+
+
+var_libraryPathList=""
+executFileListProcess $1
+# 指定ディレクトリがない場合は作成
+mkdir -p $var_copydir
+ListCopy "$var_libraryPathList" $var_copydir
