@@ -78,8 +78,6 @@ RUN apk add --no-cache --update \
 	xvidcore-dev \
 	zeromq-dev \
 	\
-	linux-rpi \
-	linux-rpi-dev \
 	raspberrypi-libs \
 	raspberrypi-dev
 
@@ -317,7 +315,6 @@ COPY --from=ffmpeg-build /build /build
 RUN set -eux && \
 	apk upgrade --update && \
 	apk add --no-cache --update \
-		linux-rpi \
 		raspberrypi-libs && \
 	\
 	# cleaning
