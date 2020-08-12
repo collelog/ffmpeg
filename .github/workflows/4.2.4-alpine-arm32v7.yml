@@ -30,7 +30,7 @@ jobs:
             --platform linux/arm/v7 \
             --output "type=image,push=false" \
             --tag collelog/ffmpeg:4.2.4-alpine-arm32v7 \
-            --file ./4.2.4-alpine-arm32v7.Dockerfile ./
+            --file ./4.2.4-alpine-arm32.Dockerfile ./
       -
         name: Docker Login
         env:
@@ -46,7 +46,7 @@ jobs:
             --platform linux/arm/v7 \
             --output "type=image,push=true" \
             --tag collelog/ffmpeg:4.2.4-alpine-arm32v7 \
-            --file ./4.2.4-alpine-arm32v7.Dockerfile ./
+            --file ./4.2.4-alpine-arm32.Dockerfile ./
       -
         name: Docker Check Manifest
         run: |
