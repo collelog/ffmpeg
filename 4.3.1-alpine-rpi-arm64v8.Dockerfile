@@ -15,7 +15,6 @@ ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/lib64:/lib64:/usr/local/lib:/usr/lib:/
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig:/usr/lib64/pkgconfig:/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
-ENV MAKEFLAGS=-j15
 
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
@@ -101,7 +100,7 @@ RUN \
 	curl -fsSL 'http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' -o config.sub && \
 	cd ../ && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install
 
 ## Codec 2 https://github.com/drowe67/codec2/
@@ -120,7 +119,7 @@ RUN \
 		tar -zx --strip-components=1 && \
 	./autogen.sh && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install
 
 ## libaribb24 https://github.com/nkoriyama/aribb24/
@@ -130,7 +129,7 @@ RUN \
 		tar -xz --strip-components=1 && \
 	autoreconf -fiv && \
 	./configure --prefix="${PREFIX}" && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install
 
 ## libmysofa https://github.com/hoene/libmysofa/
@@ -148,7 +147,7 @@ RUN \
 	curl -fsSL https://github.com/Haivision/srt/archive/v${LIBSRT_VERSION}.tar.gz | \
 		tar -xz --strip-components=1 && \
 	cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install
 
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
@@ -157,7 +156,7 @@ RUN \
 	curl -fsSL https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${OPENCOREAMR_VERSION}.tar.gz | \
 		tar -zx --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --enable-shared  && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install
 
 ## TwoLAME https://www.twolame.org/
@@ -166,7 +165,7 @@ RUN \
 	curl -fsSL https://downloads.sourceforge.net/twolame/twolame-${TWOLAME_VERSION}.tar.gz | \
 		tar -xz --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install
 
 # libopenmpt - libportaudio http://www.portaudio.com/
@@ -175,11 +174,11 @@ RUN \
 	curl -fsSL http://www.portaudio.com/archives/pa_snapshot.tgz | \
 		tar -xz --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install && \
 	cd ./bindings/cpp && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install
 
 # libopenmpt - libopenmpt https://lib.openmpt.org/libopenmpt/
@@ -188,7 +187,7 @@ RUN \
 	curl -fsSL https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-0.5.0+release.autotools.tar.gz | \
 		tar -xz --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install
 
 
@@ -282,7 +281,7 @@ RUN  \
 #		--enable-mmal \
 #		--enable-omx \
 #		--enable-omx-rpi && \
-	make ${MAKEFLAGS} && \
+	make -j $(nproc) && \
 	make install && \
 	make tools/zmqsend && \
 	cp tools/zmqsend /build${PREFIX}/bin/ && \
@@ -320,5 +319,5 @@ RUN set -eux && \
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*
 
-CMD  ["--help"]
 ENTRYPOINT  ["ffmpeg"]
+CMD  ["--help"]
