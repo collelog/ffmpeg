@@ -1,15 +1,7 @@
 # FFmpeg
 FROM collelog/buildenv:alpine AS ffmpeg-build
 
-ENV \
-	AVISYNTH_PLUS_VERSION=3.6.1 \
-	BS2B_VERSION=3.1.0 \
-	CODEC2_VERSION=0.9.2 \
-	KVAZAAR_VERSION=2.0.0 \
-	LIBMYSOFA_VERSION=1.1 \
-	LIBSRT_VERSION=1.4.1 \
-	OPENCOREAMR_VERSION=0.1.5 \
-	TWOLAME_VERSION=0.4.0
+COPY ./patch/ffmpeg-4.3.1-omx.c-rpi-arm32v7.patch /tmp/
 
 ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/local/lib:/usr/lib:/lib
 ENV PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
@@ -84,7 +76,7 @@ RUN apk add --no-cache --update \
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
 WORKDIR /tmp/AviSynthPlus
 RUN \
-	curl -fsSL https://github.com/AviSynth/AviSynthPlus/archive/v${AVISYNTH_PLUS_VERSION}.tar.gz | \
+	curl -fsSL https://github.com/AviSynth/AviSynthPlus/archive/v3.6.1.tar.gz | \
 		tar -xz --strip-components=1 && \
 	mkdir avisynth-build && cd avisynth-build && \
 	cmake ../ -DHEADERS_ONLY:bool=on && \
@@ -93,7 +85,7 @@ RUN \
 ## bs2b http://bs2b.sourceforge.net/
 WORKDIR /tmp/bs2b
 RUN \
-	curl -fsSL http://downloads.sourceforge.net/project/bs2b/libbs2b/${BS2B_VERSION}/libbs2b-${BS2B_VERSION}.tar.gz | \
+	curl -fsSL http://downloads.sourceforge.net/project/bs2b/libbs2b/3.1.0/libbs2b-3.1.0.tar.gz | \
 		tar -xz --strip-components=1 && \
 	cd ./build-aux && \
 	curl -fsSL 'http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' -o config.guess && \
@@ -106,7 +98,7 @@ RUN \
 ## Codec 2 https://github.com/drowe67/codec2/
 WORKDIR /tmp/codec2
 RUN \
-	curl -fsSL https://github.com/drowe67/codec2/archive/v${CODEC2_VERSION}.tar.gz | \
+	curl -fsSL https://github.com/drowe67/codec2/archive/v0.9.2.tar.gz | \
 		tar -xz --strip-components=1 && \
 	mkdir codec2-build && cd codec2-build && \
 	cmake ../ && \
@@ -115,7 +107,7 @@ RUN \
 ## kvazaar https://github.com/ultravideo/kvazaar
 WORKDIR /tmp/kvazaar
 RUN \
-	curl -fsSL https://github.com/ultravideo/kvazaar/archive/v${KVAZAAR_VERSION}.tar.gz | \
+	curl -fsSL https://github.com/ultravideo/kvazaar/archive/v2.0.0.tar.gz | \
 		tar -zx --strip-components=1 && \
 	./autogen.sh && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
@@ -135,7 +127,7 @@ RUN \
 ## libmysofa https://github.com/hoene/libmysofa/
 WORKDIR /tmp/libmysofa
 RUN \
-	curl -fsSL https://github.com/hoene/libmysofa/archive/v${LIBMYSOFA_VERSION}.tar.gz | \
+	curl -fsSL https://github.com/hoene/libmysofa/archive/v1.1.tar.gz | \
 		tar -xz --strip-components=1 && \
 	mkdir libmysofa-build && cd libmysofa-build && \
 	cmake ../ && \
@@ -144,7 +136,7 @@ RUN \
 ## libsrt https://github.com/Haivision/srt
 WORKDIR /tmp/srt
 RUN \
-	curl -fsSL https://github.com/Haivision/srt/archive/v${LIBSRT_VERSION}.tar.gz | \
+	curl -fsSL https://github.com/Haivision/srt/archive/v1.4.1.tar.gz | \
 		tar -xz --strip-components=1 && \
 	cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
 	make -j $(nproc) && \
@@ -153,7 +145,7 @@ RUN \
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
 WORKDIR /tmp/opencore
 RUN \
-	curl -fsSL https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${OPENCOREAMR_VERSION}.tar.gz | \
+	curl -fsSL https://versaweb.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.5.tar.gz | \
 		tar -zx --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --enable-shared  && \
 	make -j $(nproc) && \
@@ -162,7 +154,7 @@ RUN \
 ## TwoLAME https://www.twolame.org/
 WORKDIR /tmp/twolame
 RUN \
-	curl -fsSL https://downloads.sourceforge.net/twolame/twolame-${TWOLAME_VERSION}.tar.gz | \
+	curl -fsSL https://downloads.sourceforge.net/twolame/twolame-0.4.0.tar.gz | \
 		tar -xz --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
 	make -j $(nproc) && \
@@ -197,6 +189,10 @@ RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.bz2 | \
 		tar -jx --strip-components=1 && \
+	mv /tmp/ffmpeg-4.3.1-omx.c-rpi-arm32v7.patch /tmp/ffmpeg/libavcodec/ && \
+	cd /tmp/ffmpeg/libavcodec && \
+	patch < ffmpeg-4.3.1-omx.c-rpi-arm32v7.patch && \
+	cd /tmp/ffmpeg && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
@@ -276,11 +272,12 @@ RUN  \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
 		\
-		--enable-neon \
-		--enable-v4l2_m2m \
 		--enable-mmal \
+		--enable-neon \
 		--enable-omx \
-		--enable-omx-rpi && \
+		--enable-omx-rpi \
+		--enable-vfp \
+		--enable-v4l2_m2m && \
 	make -j $(nproc) && \
 	make install && \
 	make tools/zmqsend && \
