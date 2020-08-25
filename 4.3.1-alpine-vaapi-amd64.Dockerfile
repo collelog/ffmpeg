@@ -80,7 +80,7 @@ RUN \
 	curl -fsSL https://github.com/AviSynth/AviSynthPlus/archive/v3.6.1.tar.gz | \
 		tar -xz --strip-components=1 && \
 	mkdir avisynth-build && cd avisynth-build && \
-	cmake ../ -DHEADERS_ONLY:bool=on && \
+	cmake -DCMAKE_BUILD_TYPE=Release ../ -DHEADERS_ONLY:bool=on && \
 	make install
 
 ## bs2b http://bs2b.sourceforge.net/
@@ -102,7 +102,7 @@ RUN \
 	curl -fsSL https://github.com/drowe67/codec2/archive/v0.9.2.tar.gz | \
 		tar -xz --strip-components=1 && \
 	mkdir codec2-build && cd codec2-build && \
-	cmake ../ && \
+	cmake -DCMAKE_BUILD_TYPE=Release ../ && \
 	make install
 
 ## kvazaar https://github.com/ultravideo/kvazaar
@@ -131,7 +131,7 @@ RUN \
 	curl -fsSL https://github.com/hoene/libmysofa/archive/v1.1.tar.gz | \
 		tar -xz --strip-components=1 && \
 	mkdir libmysofa-build && cd libmysofa-build && \
-	cmake ../ && \
+	cmake -DCMAKE_BUILD_TYPE=Release ../ && \
 	make install
 
 ## libsrt https://github.com/Haivision/srt
@@ -139,7 +139,7 @@ WORKDIR /tmp/srt
 RUN \
 	curl -fsSL https://github.com/Haivision/srt/archive/v1.4.1.tar.gz | \
 		tar -xz --strip-components=1 && \
-	cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+	cmake -DCMAKE_BUILD_TYPE=Releas -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
 	make -j $(nproc) && \
 	make install
 
