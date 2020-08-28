@@ -271,10 +271,10 @@ RUN  \
 		--prefix="${PREFIX}" \
 		\
 #		--enable-mmal \
-		--enable-neon \
+#		--enable-neon \
 #		--enable-omx \
 #		--enable-omx-rpi \
-		--enable-vfp \
+#		--enable-vfp \
 		--enable-v4l2_m2m && \
 	make -j $(nproc) && \
 	make install && \
