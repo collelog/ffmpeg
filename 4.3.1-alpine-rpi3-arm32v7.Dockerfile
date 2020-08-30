@@ -1,7 +1,7 @@
 # FFmpeg
 FROM collelog/buildenv:alpine AS ffmpeg-build
 
-COPY ./patch/ffmpeg-4.3.1-omx.c-rpi-arm32v7.patch /tmp/
+COPY ./patch/ffmpeg-4.3.1-omx.c-rpi.patch /tmp/
 
 ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/local/lib:/usr/lib:/lib
 ENV PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
@@ -192,9 +192,9 @@ RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.bz2 | \
 		tar -jx --strip-components=1 && \
-	mv /tmp/ffmpeg-4.3.1-omx.c-rpi-arm32v7.patch /tmp/ffmpeg/libavcodec/ && \
+	mv /tmp/ffmpeg-4.3.1-omx.c-rpi.patch /tmp/ffmpeg/libavcodec/ && \
 	cd /tmp/ffmpeg/libavcodec && \
-	patch < ffmpeg-4.3.1-omx.c-rpi-arm32v7.patch && \
+	patch < ffmpeg-4.3.1-omx.c-rpi.patch && \
 	cd /tmp/ffmpeg && \
 	./configure \
 		--disable-debug \
