@@ -80,7 +80,7 @@ RUN \
 ## bs2b http://bs2b.sourceforge.net/
 WORKDIR /tmp/bs2b
 RUN \
-	curl -fsSL http://downloads.sourceforge.net/project/bs2b/libbs2b/3.1.0/libbs2b-3.1.0.tar.gz | \
+	curl -fsSL https://downloads.sourceforge.net/project/bs2b/libbs2b/3.1.0/libbs2b-3.1.0.tar.gz | \
 		tar -xz --strip-components=1 && \
 	cd ./build-aux && \
 	curl -fsSL 'http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' -o config.guess && \

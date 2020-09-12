@@ -1,8 +1,6 @@
 # FFmpeg
 FROM collelog/buildenv:alpine AS ffmpeg-build
 
-COPY ./patch/ffmpeg-4.3.1-omx.c-rpi.patch /tmp/
-
 ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/local/lib:/usr/lib:/lib
 ENV PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
 ENV SRC=/usr/local
@@ -85,7 +83,7 @@ RUN \
 ## bs2b http://bs2b.sourceforge.net/
 WORKDIR /tmp/bs2b
 RUN \
-	curl -fsSL http://downloads.sourceforge.net/project/bs2b/libbs2b/3.1.0/libbs2b-3.1.0.tar.gz | \
+	curl -fsSL https://downloads.sourceforge.net/project/bs2b/libbs2b/3.1.0/libbs2b-3.1.0.tar.gz | \
 		tar -xz --strip-components=1 && \
 	cd ./build-aux && \
 	curl -fsSL 'http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' -o config.guess && \
@@ -192,9 +190,6 @@ RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.bz2 | \
 		tar -jx --strip-components=1 && \
-	mv /tmp/ffmpeg-4.3.1-omx.c-rpi.patch /tmp/ffmpeg/libavcodec/ && \
-	cd /tmp/ffmpeg/libavcodec && \
-	patch < ffmpeg-4.3.1-omx.c-rpi.patch && \
 	cd /tmp/ffmpeg && \
 	./configure \
 		--disable-debug \
