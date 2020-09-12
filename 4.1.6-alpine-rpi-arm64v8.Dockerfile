@@ -1,8 +1,8 @@
 # FFmpeg
 FROM collelog/buildenv:alpine AS ffmpeg-build
 
-ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/lib64:/lib64:/usr/local/lib:/usr/lib:/lib
-ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig:/usr/lib64/pkgconfig:/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
+ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib:/lib
+ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
@@ -286,7 +286,7 @@ RUN rm -rf /tmp/* /var/cache/apk/*
 FROM alpine:3.12 AS release
 LABEL maintainer "collelog <collelog.cavamin@gmail.com>"
 
-ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/lib64:/lib64:/usr/local/lib:/usr/lib:/lib
+ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib:/lib
 
 COPY --from=ffmpeg-build /build /
 COPY --from=ffmpeg-build /build /build
