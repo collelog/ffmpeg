@@ -67,11 +67,13 @@ RUN apk add --no-cache --update \
 	xvidcore-dev \
 	zeromq-dev \
 	\
-	intel-media-driver \
+	intel-media-driver-dev \
 	libva-dev \
 	libva-intel-driver \
 	libva-vdpau-driver \
-	mesa-va-gallium
+	libvdpau-dev \
+	mesa-va-gallium \
+	mesa-vdpau-gallium
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -183,6 +185,16 @@ RUN \
 	make -j $(nproc) && \
 	make install
 
+# Intel-Media-SDK https://github.com/Intel-Media-SDK/MediaSDK/
+WORKDIR /tmp/libmfx
+RUN \
+	curl -fsSL https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-20.1.1.tar.gz | \
+		tar -xz --strip-components=1 && \
+	mkdir libmfx-build && cd libmfx-build && \
+	cmake -DCMAKE_BUILD_TYPE=MinSizeRel ../ && \
+	make -j $(nproc) && \
+	make install
+
 
 ## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg
@@ -269,7 +281,9 @@ RUN  \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
 		\
-		--enable-vaapi && \
+		--enable-libmfx \
+		--enable-vaapi \
+		--enable-vdpau && \
 	make -j $(nproc) && \
 	make install && \
 	make tools/zmqsend && \
@@ -288,6 +302,8 @@ RUN echo /usr/local/bin/ffmpeg >> cplist
 RUN echo /usr/local/bin/ffprobe >> cplist
 RUN ./cp.sh cplist /build
 
+RUN cp --archive --parents --no-dereference /opt/intel /build
+
 RUN rm -rf /tmp/* /var/cache/apk/*
 
 
@@ -295,7 +311,7 @@ RUN rm -rf /tmp/* /var/cache/apk/*
 FROM alpine:3.12 AS release
 LABEL maintainer "collelog <collelog.cavamin@gmail.com>"
 
-ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/lib64:/lib64:/usr/local/lib:/usr/lib:/lib
+ENV LD_LIBRARY_PATH=/opt/intel/mediasdk/lib64:/usr/local/lib64:/usr/lib64:/lib64:/usr/local/lib:/usr/lib:/lib
 
 COPY --from=ffmpeg-build /build /
 COPY --from=ffmpeg-build /build /build
@@ -309,7 +325,9 @@ RUN set -eux && \
 		libva \
 		libva-intel-driver \
 		libva-vdpau-driver \
-		mesa-va-gallium && \
+		libvdpau \
+		mesa-va-gallium \
+		mesa-vdpau-gallium && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*
