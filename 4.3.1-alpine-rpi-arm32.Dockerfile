@@ -187,7 +187,6 @@ RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.bz2 | \
 		tar -jx --strip-components=1 && \
-	cd /tmp/ffmpeg && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
