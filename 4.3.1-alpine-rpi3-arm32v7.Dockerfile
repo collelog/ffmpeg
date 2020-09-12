@@ -190,7 +190,6 @@ RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.bz2 | \
 		tar -jx --strip-components=1 && \
-	cd /tmp/ffmpeg && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
@@ -271,10 +270,10 @@ RUN  \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
 		\
-#		--enable-mmal \
+		--enable-mmal \
 #		--enable-neon \
-#		--enable-omx \
-#		--enable-omx-rpi \
+		--enable-omx \
+		--enable-omx-rpi \
 #		--enable-vfp \
 		--enable-v4l2_m2m && \
 	make -j $(nproc) && \
