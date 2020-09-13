@@ -141,7 +141,7 @@ WORKDIR /tmp/srt
 RUN \
 	curl -fsSL https://github.com/Haivision/srt/archive/v1.4.1.tar.gz | \
 		tar -xz --strip-components=1 && \
-	cmake -DCMAKE_BUILD_TYPE=Releas -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
 	make -j $(nproc) && \
 	make install
 

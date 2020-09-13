@@ -6,9 +6,6 @@ ENV PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgc
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
-RUN apk add --no-cache --update \
-	chromaprint-dev
-
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update \
@@ -115,16 +112,6 @@ RUN \
 	make -j $(nproc) && \
 	make install
 
-## libaribb24 https://github.com/nkoriyama/aribb24/
-WORKDIR /tmp/aribb24
-RUN \
-	curl -fsSL https://github.com/nkoriyama/aribb24/tarball/master | \
-		tar -xz --strip-components=1 && \
-	autoreconf -fiv && \
-	./configure --prefix="${PREFIX}" && \
-	make -j $(nproc) && \
-	make install
-
 ## libmysofa https://github.com/hoene/libmysofa/
 WORKDIR /tmp/libmysofa
 RUN \
@@ -139,7 +126,7 @@ WORKDIR /tmp/srt
 RUN \
 	curl -fsSL https://github.com/Haivision/srt/archive/v1.4.1.tar.gz | \
 		tar -xz --strip-components=1 && \
-	cmake -DCMAKE_BUILD_TYPE=Releas -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
 	make -j $(nproc) && \
 	make install
 
@@ -184,11 +171,14 @@ RUN \
 	make install
 
 
+ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits"
+ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits"
+
 ## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg
 RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
-	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.bz2 | \
+	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.1.6.tar.bz2 | \
 		tar -jx --strip-components=1 && \
 	./configure \
 		--disable-debug \
@@ -199,13 +189,12 @@ RUN  \
 		--disable-thumb \
 		--enable-avisynth \
 		--enable-avresample \
-		--enable-chromaprint \
+#		--enable-chromaprint \
 		--enable-fontconfig \
 		--enable-frei0r \
 		--enable-gpl \
 		--enable-ladspa \
 		--enable-libaom \
-		--enable-libaribb24 \
 		--enable-libass \
 		--enable-libbluray \
 		--enable-libbs2b \
@@ -264,16 +253,17 @@ RUN  \
 		--enable-shared \
 		--enable-small \
 		--enable-version3 \
-		--extra-cflags="-I${PREFIX}/include -I/opt/vc/include/IL" \
+		--extra-cflags="-I${PREFIX}/include -I/opt/vc/include/IL ${CFLAGS}" \
+		--extra-cxxflags="-I${PREFIX}/include -I/opt/vc/include/IL ${CXXFLAGS}" \
 		--extra-ldflags="-L${PREFIX}/lib" \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
 		\
 		--enable-mmal \
-		--enable-neon \
+#		--enable-neon \
 		--enable-omx \
 		--enable-omx-rpi \
-		--enable-vfp \
+#		--enable-vfp \
 		--enable-v4l2_m2m && \
 	make -j $(nproc) && \
 	make install && \

@@ -1,13 +1,10 @@
 # FFmpeg
 FROM collelog/buildenv:alpine AS ffmpeg-build
 
-ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/local/lib:/usr/lib:/lib
-ENV PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
+ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib:/lib
+ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
-
-RUN apk add --no-cache --update \
-	chromaprint-dev
 
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
@@ -35,7 +32,7 @@ RUN apk add --no-cache --update \
 	libdc1394-dev \
 	libdrm-dev \
 	libgme-dev \
-##	libiec61883-dev \
+#	libiec61883-dev \
 	libogg-dev \
 	libpng-dev \
 	librsvg-dev \
@@ -184,12 +181,15 @@ RUN \
 	make install
 
 
+ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
+ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
+
 ## 0p1pp1/FFmpeg https://github.com/0p1pp1/FFmpeg/
 WORKDIR /tmp/ffmpeg
 RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://github.com/0p1pp1/FFmpeg/tarball/isdb-4.2 | \
-		tar -xz --strip-components=1 && \
+		tar -jx --strip-components=1 && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
@@ -221,7 +221,7 @@ RUN  \
 		--enable-libfribidi \
 		--enable-libgme \
 		--enable-libgsm \
-##		--enable-libiec61883 \
+#		--enable-libiec61883 \
 		--enable-libjack \
 		--enable-libkvazaar \
 		--enable-libmp3lame \
@@ -233,7 +233,7 @@ RUN  \
 		--enable-libopus \
 		--enable-libpulse \
 		--enable-librsvg \
-#		--enable-librubberband \
+		--enable-librubberband \
 		--enable-libshine \
 		--enable-libsnappy \
 		--enable-libsoxr \
@@ -253,8 +253,8 @@ RUN  \
 		--enable-libxml2 \
 		--enable-libxvid \
 		--enable-libzmq \
-##		--enable-libzvbi \
-#		--enable-lv2 \
+#		--enable-libzvbi \
+		--enable-lv2 \
 		--enable-nonfree \
 		--enable-openal \
 		--enable-opengl \
@@ -264,16 +264,17 @@ RUN  \
 		--enable-shared \
 		--enable-small \
 		--enable-version3 \
-		--extra-cflags="-I${PREFIX}/include -I/opt/vc/include/IL" \
+		--extra-cflags="-I${PREFIX}/include ${CFLAGS}" \
+		--extra-cxxflags="-I${PREFIX}/include ${CXXFLAGS}" \
 		--extra-ldflags="-L${PREFIX}/lib" \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
 		\
-		--enable-mmal \
-		--enable-neon \
-		--enable-omx \
-		--enable-omx-rpi \
-		--enable-vfp \
+#		--enable-mmal \
+#		--enable-neon \
+#		--enable-omx \
+#		--enable-omx-rpi \
+#		--enable-vfp \
 		--enable-v4l2_m2m && \
 	make -j $(nproc) && \
 	make install && \
@@ -300,7 +301,7 @@ RUN rm -rf /tmp/* /var/cache/apk/*
 FROM alpine:3.12 AS release
 LABEL maintainer "collelog <collelog.cavamin@gmail.com>"
 
-ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/local/lib:/usr/lib:/lib
+ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib:/lib
 
 COPY --from=ffmpeg-build /build /
 COPY --from=ffmpeg-build /build /build

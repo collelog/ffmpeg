@@ -6,9 +6,6 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
-RUN apk add --no-cache --update \
-	chromaprint-dev
-
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update \
@@ -196,7 +193,7 @@ RUN  \
 		--disable-thumb \
 		--enable-avisynth \
 		--enable-avresample \
-		--enable-chromaprint \
+#		--enable-chromaprint \
 		--enable-fontconfig \
 		--enable-frei0r \
 		--enable-gpl \

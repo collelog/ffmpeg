@@ -6,9 +6,6 @@ ENV PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgc
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
-RUN apk add --no-cache --update \
-	chromaprint-dev
-
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update \
@@ -139,7 +136,7 @@ WORKDIR /tmp/srt
 RUN \
 	curl -fsSL https://github.com/Haivision/srt/archive/v1.4.1.tar.gz | \
 		tar -xz --strip-components=1 && \
-	cmake -DCMAKE_BUILD_TYPE=Releas -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
 	make -j $(nproc) && \
 	make install
 
@@ -202,7 +199,7 @@ RUN  \
 		--disable-thumb \
 		--enable-avisynth \
 		--enable-avresample \
-		--enable-chromaprint \
+#		--enable-chromaprint \
 		--enable-fontconfig \
 		--enable-frei0r \
 		--enable-gpl \

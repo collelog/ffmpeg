@@ -65,7 +65,10 @@ RUN apk add --no-cache --update \
 	x264-dev \
 	x265-dev \
 	xvidcore-dev \
-	zeromq-dev
+	zeromq-dev \
+	\
+	raspberrypi-libs \
+	raspberrypi-dev
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -178,6 +181,9 @@ RUN \
 	make install
 
 
+ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
+ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
+
 ## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg
 RUN  \
@@ -258,10 +264,18 @@ RUN  \
 		--enable-shared \
 		--enable-small \
 		--enable-version3 \
-		--extra-cflags="-I${PREFIX}/include" \
+		--extra-cflags="-I${PREFIX}/include ${CFLAGS}" \
+		--extra-cxxflags="-I${PREFIX}/include ${CXXFLAGS}" \
 		--extra-ldflags="-L${PREFIX}/lib" \
 		--extra-libs="-lpthread -lm" \
-		--prefix="${PREFIX}" && \
+		--prefix="${PREFIX}" \
+		\
+#		--enable-mmal \
+#		--enable-neon \
+#		--enable-omx \
+#		--enable-omx-rpi \
+#		--enable-vfp \
+		--enable-v4l2_m2m && \
 	make -j $(nproc) && \
 	make install && \
 	make tools/zmqsend && \
@@ -294,6 +308,8 @@ COPY --from=ffmpeg-build /build /build
 
 RUN set -eux && \
 	apk upgrade --update && \
+	apk add --no-cache --update \
+		raspberrypi-libs && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*

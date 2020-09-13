@@ -112,16 +112,6 @@ RUN \
 	make -j $(nproc) && \
 	make install
 
-## libaribb24 https://github.com/nkoriyama/aribb24/
-WORKDIR /tmp/aribb24
-RUN \
-	curl -fsSL https://github.com/nkoriyama/aribb24/tarball/master | \
-		tar -xz --strip-components=1 && \
-	autoreconf -fiv && \
-	./configure --prefix="${PREFIX}" && \
-	make -j $(nproc) && \
-	make install
-
 ## libmysofa https://github.com/hoene/libmysofa/
 WORKDIR /tmp/libmysofa
 RUN \
@@ -181,12 +171,15 @@ RUN \
 	make install
 
 
-## 0p1pp1/FFmpeg https://github.com/0p1pp1/FFmpeg/
+ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
+ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
+
+## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg
 RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
-	curl -fsSL https://github.com/0p1pp1/FFmpeg/tarball/isdb-4.2 | \
-		tar -xz --strip-components=1 && \
+	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.1.6.tar.bz2 | \
+		tar -jx --strip-components=1 && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
@@ -202,7 +195,6 @@ RUN  \
 		--enable-gpl \
 		--enable-ladspa \
 		--enable-libaom \
-		--enable-libaribb24 \
 		--enable-libass \
 		--enable-libbluray \
 		--enable-libbs2b \
@@ -261,16 +253,17 @@ RUN  \
 		--enable-shared \
 		--enable-small \
 		--enable-version3 \
-		--extra-cflags="-I${PREFIX}/include" \
+		--extra-cflags="-I${PREFIX}/include ${CFLAGS}" \
+		--extra-cxxflags="-I${PREFIX}/include ${CXXFLAGS}" \
 		--extra-ldflags="-L${PREFIX}/lib" \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
 		\
 #		--enable-mmal \
-		--enable-neon \
+#		--enable-neon \
 #		--enable-omx \
 #		--enable-omx-rpi \
-		--enable-vfp \
+#		--enable-vfp \
 		--enable-v4l2_m2m && \
 	make -j $(nproc) && \
 	make install && \

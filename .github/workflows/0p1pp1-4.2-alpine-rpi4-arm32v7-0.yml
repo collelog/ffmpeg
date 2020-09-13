@@ -1,4 +1,4 @@
-name: 0p1pp1-4.2-alpine-rpi-arm64v8
+name: 0p1pp1-4.2-alpine-rpi4-arm32v7
 
 on: [ workflow_dispatch ]
 
@@ -27,10 +27,10 @@ jobs:
           docker buildx build \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
-            --platform linux/arm64 \
+            --platform linux/arm/v7 \
             --output "type=image,push=false" \
-            --tag collelog/ffmpeg:0p1pp1-4.2-alpine-rpi-arm64v8 \
-            --file ./0p1pp1-4.2-alpine-rpi-arm64v8.Dockerfile ./
+            --tag collelog/ffmpeg:0p1pp1-4.2-alpine-rpi4-arm32v7 \
+            --file ./0p1pp1-4.2-alpine-rpi4-arm32v7.Dockerfile ./
       -
         name: Docker Login
         env:
@@ -43,14 +43,14 @@ jobs:
         run: |
           docker buildx build \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
-            --platform linux/arm64 \
+            --platform linux/arm/v7 \
             --output "type=image,push=true" \
-            --tag collelog/ffmpeg:0p1pp1-4.2-alpine-rpi-arm64v8 \
-            --file ./0p1pp1-4.2-alpine-rpi-arm64v8.Dockerfile ./
+            --tag collelog/ffmpeg:0p1pp1-4.2-alpine-rpi4-arm32v7 \
+            --file ./0p1pp1-4.2-alpine-rpi4-arm32v7.Dockerfile ./
       -
-        name: Docker Check Manifest
+        name: Docker Check Manifest - 0p1pp1-4.2-alpine-rpi4-arm32v7
         run: |
-          docker run --rm mplatform/mquery collelog/ffmpeg:0p1pp1-4.2-alpine-rpi-arm64v8
+          docker run --rm mplatform/mquery collelog/ffmpeg:0p1pp1-4.2-alpine-rpi4-arm32v7
       -
         name: Clear
         if: always()
