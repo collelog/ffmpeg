@@ -6,8 +6,11 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
-#RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-#RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
+RUN apk add --no-cache --update \
+	chromaprint-dev
+
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update \
 	aom-dev \
 	chromaprint-dev \
@@ -22,7 +25,7 @@ RUN apk add --no-cache --update \
 	fribidi-dev \
 	gsm-dev \
 	jack-dev \
-#	ladspa-dev \
+	ladspa-dev \
 	lame-dev \
 	libass-dev \
 	libbluray-dev \
@@ -31,7 +34,7 @@ RUN apk add --no-cache --update \
 	libcdio-paranoia-dev \
 	libdc1394-dev \
 	libdrm-dev \
-#	libgme-dev \
+	libgme-dev \
 ##	libiec61883-dev \
 	libogg-dev \
 	libpng-dev \
@@ -45,7 +48,7 @@ RUN apk add --no-cache --update \
 	libxau-dev \
 	libxcb-dev \
 	libxml2-dev \
-#	lilv-dev \
+	lilv-dev \
 	mesa-dev \
 	mpg123-dev \
 	openjpeg-dev \
@@ -53,14 +56,14 @@ RUN apk add --no-cache --update \
 	openssl-dev \
 	opus-dev \
 	pulseaudio-dev \
-#	rubberband-dev \
+	rubberband-dev \
 	sdl2-dev \
-#	shine \
+	shine \
 	snappy-dev \
 	soxr-dev \
 	speex-dev \
 	util-linux-dev \
-#	vidstab-dev \
+	vidstab-dev \
 	wavpack-dev \
 	x264-dev \
 	x265-dev \
@@ -197,7 +200,7 @@ RUN  \
 		--enable-fontconfig \
 		--enable-frei0r \
 		--enable-gpl \
-#		--enable-ladspa \
+		--enable-ladspa \
 		--enable-libaom \
 		--enable-libaribb24 \
 		--enable-libass \
@@ -213,7 +216,7 @@ RUN  \
 		--enable-libfontconfig \
 		--enable-libfreetype \
 		--enable-libfribidi \
-#		--enable-libgme \
+		--enable-libgme \
 		--enable-libgsm \
 ##		--enable-libiec61883 \
 		--enable-libjack \
@@ -228,7 +231,7 @@ RUN  \
 		--enable-libpulse \
 		--enable-librsvg \
 #		--enable-librubberband \
-#		--enable-libshine \
+		--enable-libshine \
 		--enable-libsnappy \
 		--enable-libsoxr \
 		--enable-libspeex \
@@ -236,7 +239,7 @@ RUN  \
 		--enable-libssh \
 		--enable-libtheora \
 		--enable-libtwolame \
-#		--enable-libvidstab \
+		--enable-libvidstab \
 		--enable-libvorbis \
 		--enable-libvpx \
 		--enable-libwavpack \
