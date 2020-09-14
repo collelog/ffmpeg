@@ -181,7 +181,7 @@ WORKDIR /tmp/ffmpeg
 RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.1.6.tar.bz2 | \
-		tar -xz --strip-components=1 && \
+		tar -jx --strip-components=1 && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
