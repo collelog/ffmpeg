@@ -72,6 +72,7 @@ RUN apk add --no-cache --update \
 	shine \
 	vidstab-dev
 
+
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
 WORKDIR /tmp/AviSynthPlus
 RUN \
