@@ -6,8 +6,6 @@ ENV PKG_CONFIG_PATH=/opt/intel/mediasdk/lib64/pkgconfig:/usr/local/lib64/pkgconf
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update \
 	aom-dev \
 	chromaprint-dev \
@@ -22,7 +20,6 @@ RUN apk add --no-cache --update \
 	fribidi-dev \
 	gsm-dev \
 	jack-dev \
-	ladspa-dev \
 	lame-dev \
 	libass-dev \
 	libbluray-dev \
@@ -31,8 +28,6 @@ RUN apk add --no-cache --update \
 	libcdio-paranoia-dev \
 	libdc1394-dev \
 	libdrm-dev \
-	libgme-dev \
-#	libiec61883-dev \
 	libogg-dev \
 	libpng-dev \
 	librsvg-dev \
@@ -45,7 +40,6 @@ RUN apk add --no-cache --update \
 	libxau-dev \
 	libxcb-dev \
 	libxml2-dev \
-	lilv-dev \
 	mesa-dev \
 	mpg123-dev \
 	openjpeg-dev \
@@ -53,27 +47,36 @@ RUN apk add --no-cache --update \
 	openssl-dev \
 	opus-dev \
 	pulseaudio-dev \
-	rubberband-dev \
 	sdl2-dev \
-	shine \
 	snappy-dev \
 	soxr-dev \
 	speex-dev \
 	util-linux-dev \
-	vidstab-dev \
 	wavpack-dev \
 	x264-dev \
 	x265-dev \
 	xvidcore-dev \
 	zeromq-dev \
 	\
-	intel-media-driver-dev \
 	libva-dev \
 	libva-intel-driver \
-	libva-vdpau-driver \
 	libvdpau-dev \
 	mesa-va-gallium \
 	mesa-vdpau-gallium
+
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
+RUN apk add --no-cache --update \
+	ladspa-dev \
+	libiec61883-dev \
+	libgme-dev \
+	lilv-dev \
+	rubberband-dev \
+	shine \
+	vidstab-dev \
+	\
+	intel-media-driver-dev \
+	libva-vdpau-driver
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -306,17 +309,18 @@ COPY --from=ffmpeg-build /build /
 COPY --from=ffmpeg-build /build /build
 
 RUN set -eux && \
-	echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
-	echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
 	apk upgrade --update && \
 	apk add --no-cache --update \
-		intel-media-driver \
 		libva \
 		libva-intel-driver \
-		libva-vdpau-driver \
 		libvdpau \
 		mesa-va-gallium \
 		mesa-vdpau-gallium && \
+	echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
+	echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
+	apk add --no-cache --update \
+		intel-media-driver-dev \
+		libva-vdpau-driver && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*

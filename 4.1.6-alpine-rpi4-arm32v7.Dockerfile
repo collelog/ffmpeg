@@ -6,8 +6,6 @@ ENV PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgc
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update \
 	aom-dev \
 	chromaprint-dev \
@@ -22,7 +20,6 @@ RUN apk add --no-cache --update \
 	fribidi-dev \
 	gsm-dev \
 	jack-dev \
-	ladspa-dev \
 	lame-dev \
 	libass-dev \
 	libbluray-dev \
@@ -31,8 +28,6 @@ RUN apk add --no-cache --update \
 	libcdio-paranoia-dev \
 	libdc1394-dev \
 	libdrm-dev \
-	libgme-dev \
-##	libiec61883-dev \
 	libogg-dev \
 	libpng-dev \
 	librsvg-dev \
@@ -45,7 +40,6 @@ RUN apk add --no-cache --update \
 	libxau-dev \
 	libxcb-dev \
 	libxml2-dev \
-	lilv-dev \
 	mesa-dev \
 	mpg123-dev \
 	openjpeg-dev \
@@ -53,14 +47,11 @@ RUN apk add --no-cache --update \
 	openssl-dev \
 	opus-dev \
 	pulseaudio-dev \
-	rubberband-dev \
 	sdl2-dev \
-	shine \
 	snappy-dev \
 	soxr-dev \
 	speex-dev \
 	util-linux-dev \
-	vidstab-dev \
 	wavpack-dev \
 	x264-dev \
 	x265-dev \
@@ -69,6 +60,17 @@ RUN apk add --no-cache --update \
 	\
 	raspberrypi-libs \
 	raspberrypi-dev
+
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
+RUN apk add --no-cache --update \
+	ladspa-dev \
+	libiec61883-dev \
+	libgme-dev \
+	lilv-dev \
+	rubberband-dev \
+	shine \
+	vidstab-dev
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -179,7 +181,7 @@ WORKDIR /tmp/ffmpeg
 RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.1.6.tar.bz2 | \
-		tar -jx --strip-components=1 && \
+		tar -xz --strip-components=1 && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
