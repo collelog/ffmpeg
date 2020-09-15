@@ -173,8 +173,8 @@ RUN \
 	make install
 
 
-ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
-ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer"
+ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer"
+ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer"
 
 ## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg

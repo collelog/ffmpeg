@@ -173,8 +173,8 @@ RUN \
 	make install
 
 
-ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits"
-ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -ftree-vectorize -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits"
+ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits"
+ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits"
 
 ## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg

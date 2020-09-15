@@ -179,6 +179,8 @@ RUN \
 	make -j $(nproc) && \
 	make install
 
+ENV CFLAGS="-O2 -fomit-frame-pointer"
+ENV CXXFLAGS="-O2 -fomit-frame-pointer"
 
 ## 0p1pp1/FFmpeg https://github.com/0p1pp1/FFmpeg/
 WORKDIR /tmp/ffmpeg
@@ -260,7 +262,8 @@ RUN  \
 		--enable-shared \
 		--enable-small \
 		--enable-version3 \
-		--extra-cflags="-I${PREFIX}/include" \
+		--extra-cflags="-I${PREFIX}/include ${CFLAGS}" \
+		--extra-cxxflags="-I${PREFIX}/include ${CXXFLAGS}" \
 		--extra-ldflags="-L${PREFIX}/lib" \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
