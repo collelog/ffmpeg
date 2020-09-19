@@ -325,15 +325,13 @@ COPY --from=ffmpeg-build /build /build
 RUN set -eux && \
 	apk upgrade --update && \
 	apk add --no-cache --update \
-		libva \
 		libva-intel-driver \
-		libvdpau \
 		mesa-va-gallium \
 		mesa-vdpau-gallium && \
 	echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
 	echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
 	apk add --no-cache --update \
-		intel-media-driver-dev \
+		intel-media-driver \
 		libva-vdpau-driver && \
 	\
 	# cleaning
