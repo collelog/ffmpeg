@@ -260,7 +260,6 @@ RUN  \
 		--enable-postproc \
 		--enable-sdl2 \
 		--enable-shared \
-		--enable-small \
 		--enable-version3 \
 		--extra-cflags="-I${PREFIX}/include ${CFLAGS}" \
 		--extra-cxxflags="-I${PREFIX}/include ${CXXFLAGS}" \
