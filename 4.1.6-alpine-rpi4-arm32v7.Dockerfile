@@ -173,8 +173,8 @@ RUN \
 	make install
 
 
-ENV CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits"
-ENV CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits"
+ENV CFLAGS="-O3 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
+ENV CXXFLAGS="-O3 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
 
 ## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg
@@ -253,7 +253,6 @@ RUN  \
 		--enable-postproc \
 		--enable-sdl2 \
 		--enable-shared \
-		--enable-small \
 		--enable-version3 \
 		--extra-cflags="-I${PREFIX}/include -I/opt/vc/include/IL ${CFLAGS}" \
 		--extra-cxxflags="-I${PREFIX}/include -I/opt/vc/include/IL ${CXXFLAGS}" \

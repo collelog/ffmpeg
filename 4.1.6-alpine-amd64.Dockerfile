@@ -169,8 +169,8 @@ RUN \
 	make -j $(nproc) && \
 	make install
 
-ENV CFLAGS="-O2 -march=x86-64 -mtune=generic -fomit-frame-pointer"
-ENV CXXFLAGS="-O2 -march=x86-64 -mtune=generic -fomit-frame-pointer"
+ENV CFLAGS="-O3 -pipe -march=x86-64 -mtune=generic"
+ENV CXXFLAGS="-O3 -pipe -march=x86-64 -mtune=generic"
 
 ## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg
@@ -249,7 +249,6 @@ RUN  \
 		--enable-postproc \
 		--enable-sdl2 \
 		--enable-shared \
-		--enable-small \
 		--enable-version3 \
 		--extra-cflags="-I${PREFIX}/include ${CFLAGS}" \
 		--extra-cxxflags="-I${PREFIX}/include ${CXXFLAGS}" \
