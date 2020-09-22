@@ -183,8 +183,8 @@ RUN \
 	make install
 
 
-ENV CFLAGS="-O3 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
-ENV CXXFLAGS="-O3 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
+ENV CFLAGS="-O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
+ENV CXXFLAGS="-O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
 
 ## 0p1pp1/FFmpeg https://github.com/0p1pp1/FFmpeg/
 WORKDIR /tmp/ffmpeg

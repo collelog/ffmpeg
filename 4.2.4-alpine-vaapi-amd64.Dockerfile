@@ -198,8 +198,8 @@ RUN \
 	make -j $(nproc) && \
 	make install
 
-ENV CFLAGS="-O3 -pipe -march=x86-64 -mtune=generic"
-ENV CXXFLAGS="-O3 -pipe -march=x86-64 -mtune=generic"
+ENV CFLAGS="-O2 -pipe -march=x86-64 -mtune=generic"
+ENV CXXFLAGS="-O2 -pipe -march=x86-64 -mtune=generic"
 
 ## ffmpeg https://ffmpeg.org/
 WORKDIR /tmp/ffmpeg
