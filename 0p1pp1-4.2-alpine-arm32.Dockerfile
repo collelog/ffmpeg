@@ -178,8 +178,8 @@ RUN \
 	make -j $(nproc) && \
 	make install
 
-ENV CFLAGS="-O2 -fomit-frame-pointer"
-ENV CXXFLAGS="-O2 -fomit-frame-pointer"
+ENV CFLAGS="-O2 -pipe"
+ENV CXXFLAGS="-O2 -pipe"
 
 ## 0p1pp1/FFmpeg https://github.com/0p1pp1/FFmpeg/
 WORKDIR /tmp/ffmpeg
