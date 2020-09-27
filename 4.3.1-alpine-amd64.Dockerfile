@@ -69,6 +69,10 @@ RUN apk add --no-cache --update \
 	shine \
 	vidstab-dev
 
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
+RUN apk add --no-cache --update \
+	gcc=10.2.0-r5
+
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
 WORKDIR /tmp/AviSynthPlus

@@ -78,6 +78,10 @@ RUN apk add --no-cache --update \
 	intel-media-driver-dev \
 	libva-vdpau-driver
 
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
+RUN apk add --no-cache --update \
+	gcc=10.2.0-r5
+
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
 WORKDIR /tmp/AviSynthPlus
@@ -86,7 +90,7 @@ RUN \
 		tar -xz --strip-components=1 && \
 	mkdir avisynth-build && cd avisynth-build && \
 	cmake -DCMAKE_BUILD_TYPE=Release ../ -DHEADERS_ONLY:bool=on && \
-	make install
+	make -j $(nproc) install
 
 ## bs2b http://bs2b.sourceforge.net/
 WORKDIR /tmp/bs2b
@@ -99,7 +103,7 @@ RUN \
 	cd ../ && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 ## Codec 2 https://github.com/drowe67/codec2/
 WORKDIR /tmp/codec2
@@ -108,7 +112,7 @@ RUN \
 		tar -xz --strip-components=1 && \
 	mkdir codec2-build && cd codec2-build && \
 	cmake -DCMAKE_BUILD_TYPE=Release ../ && \
-	make install
+	make -j $(nproc) install
 
 ## kvazaar https://github.com/ultravideo/kvazaar
 WORKDIR /tmp/kvazaar
@@ -118,7 +122,7 @@ RUN \
 	./autogen.sh && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 ## libaribb24 https://github.com/nkoriyama/aribb24/
 WORKDIR /tmp/aribb24
@@ -128,7 +132,7 @@ RUN \
 	autoreconf -fiv && \
 	./configure --prefix="${PREFIX}" && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 ## libmysofa https://github.com/hoene/libmysofa/
 WORKDIR /tmp/libmysofa
@@ -137,7 +141,7 @@ RUN \
 		tar -xz --strip-components=1 && \
 	mkdir libmysofa-build && cd libmysofa-build && \
 	cmake -DCMAKE_BUILD_TYPE=Release ../ && \
-	make install
+	make -j $(nproc) install
 
 ## libsrt https://github.com/Haivision/srt
 WORKDIR /tmp/srt
@@ -146,7 +150,7 @@ RUN \
 		tar -xz --strip-components=1 && \
 	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
 WORKDIR /tmp/opencore
@@ -155,7 +159,7 @@ RUN \
 		tar -zx --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --enable-shared  && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 ## TwoLAME https://www.twolame.org/
 WORKDIR /tmp/twolame
@@ -164,7 +168,7 @@ RUN \
 		tar -xz --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 # libopenmpt - libportaudio http://www.portaudio.com/
 WORKDIR /tmp/libportaudio
@@ -173,11 +177,11 @@ RUN \
 		tar -xz --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
 	make -j $(nproc) && \
-	make install && \
+	make -j $(nproc) install && \
 	cd ./bindings/cpp && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 # libopenmpt - libopenmpt https://lib.openmpt.org/libopenmpt/
 WORKDIR /tmp/libopenmpt
@@ -186,7 +190,7 @@ RUN \
 		tar -xz --strip-components=1 && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 # Intel-Media-SDK https://github.com/Intel-Media-SDK/MediaSDK/
 WORKDIR /tmp/libmfx
@@ -196,7 +200,7 @@ RUN \
 	mkdir libmfx-build && cd libmfx-build && \
 	cmake -DCMAKE_BUILD_TYPE=MinSizeRel ../ && \
 	make -j $(nproc) && \
-	make install
+	make -j $(nproc) install
 
 ENV CFLAGS="-O2 -pipe -march=x86-64 -mtune=generic"
 ENV CXXFLAGS="-O2 -pipe -march=x86-64 -mtune=generic"
@@ -290,7 +294,7 @@ RUN  \
 		--enable-vaapi \
 		--enable-vdpau && \
 	make -j $(nproc) && \
-	make install && \
+	make -j $(nproc) install && \
 	make tools/zmqsend && \
 	cp tools/zmqsend /build${PREFIX}/bin/ && \
 	make distclean && \
