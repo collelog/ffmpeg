@@ -6,7 +6,7 @@ ENV PKG_CONFIG_PATH=/opt/intel/mediasdk/lib64/pkgconfig:/usr/local/lib64/pkgconf
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
-RUN apk add --no-cache --update \
+RUN apk add --no-cache --update-cache \
 	aom-dev \
 	chromaprint-dev \
 	cunit-dev \
@@ -64,9 +64,9 @@ RUN apk add --no-cache --update \
 	mesa-va-gallium \
 	mesa-vdpau-gallium
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
-RUN apk add --no-cache --update \
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
+RUN apk add --no-cache --update-cache \
 	ladspa-dev \
 	libiec61883-dev \
 	libgme-dev \
@@ -78,9 +78,10 @@ RUN apk add --no-cache --update \
 	intel-media-driver-dev \
 	libva-vdpau-driver
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
-RUN apk add --no-cache --update \
-	gcc=10.2.0-r5
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
+RUN apk add --no-cache --update-cache \
+	gcc=10.2.0-r5 \
+	musl=1.2.1-r1
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -326,16 +327,19 @@ COPY --from=ffmpeg-build /build /
 COPY --from=ffmpeg-build /build /build
 
 RUN set -eux && \
-	apk upgrade --update && \
-	apk add --no-cache --update \
+	apk upgrade --no-cache --update-cache && \
+	apk add --no-cache --update-cache \
 		libva-intel-driver \
 		mesa-va-gallium \
 		mesa-vdpau-gallium && \
-	echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
-	echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
-	apk add --no-cache --update \
+	echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
+	echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
+	apk add --no-cache --update-cache \
 		intel-media-driver \
 		libva-vdpau-driver && \
+	echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+	apk add --no-cache --update-cache \
+		musl=1.2.1-r1 && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*

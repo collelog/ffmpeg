@@ -6,7 +6,7 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
-RUN apk add --no-cache --update \
+RUN apk add --no-cache --update-cache \
 	aom-dev \
 	chromaprint-dev \
 	cunit-dev \
@@ -58,9 +58,9 @@ RUN apk add --no-cache --update \
 	xvidcore-dev \
 	zeromq-dev
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
-RUN apk add --no-cache --update \
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
+RUN apk add --no-cache --update-cache \
 	ladspa-dev \
 	libiec61883-dev \
 	libgme-dev \
@@ -69,9 +69,10 @@ RUN apk add --no-cache --update \
 	shine \
 	vidstab-dev
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
-RUN apk add --no-cache --update \
-	gcc=10.2.0-r5
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
+RUN apk add --no-cache --update-cache \
+	gcc=10.2.0-r5 \
+	musl=1.2.1-r1
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -292,7 +293,10 @@ COPY --from=ffmpeg-build /build /
 COPY --from=ffmpeg-build /build /build
 
 RUN set -eux && \
-	apk upgrade --update && \
+	apk upgrade --no-cache --update-cache && \
+	echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+	apk add --no-cache --update-cache \
+		musl=1.2.1-r1 && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*
