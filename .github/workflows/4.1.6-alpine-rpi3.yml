@@ -1,4 +1,4 @@
-name: 4.2.4-alpine-rpi3-arm32v7
+name: 4.1.6-alpine-rpi3
 
 on: [ workflow_dispatch ]
 
@@ -29,8 +29,8 @@ jobs:
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --platform linux/arm/v7 \
             --output "type=image,push=false" \
-            --tag collelog/ffmpeg:4.2.4-alpine-rpi3-arm32v7 \
-            --file ./4.2.4-alpine-rpi3-arm32v7.Dockerfile ./
+            --tag collelog/ffmpeg:4.1.6-alpine-rpi3 \
+            --file ./4.1.6-alpine-rpi3.Dockerfile ./
       -
         name: Docker Login
         env:
@@ -45,12 +45,12 @@ jobs:
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --platform linux/arm/v7 \
             --output "type=image,push=true" \
-            --tag collelog/ffmpeg:4.2.4-alpine-rpi3-arm32v7 \
-            --file ./4.2.4-alpine-rpi3-arm32v7.Dockerfile ./
+            --tag collelog/ffmpeg:4.1.6-alpine-rpi3 \
+            --file ./4.1.6-alpine-rpi3.Dockerfile ./
       -
         name: Docker Check Manifest
         run: |
-          docker run --rm mplatform/mquery collelog/ffmpeg:4.2.4-alpine-rpi3-arm32v7
+          docker run --rm mplatform/mquery collelog/ffmpeg:4.1.6-alpine-rpi3
       -
         name: Clear
         if: always()

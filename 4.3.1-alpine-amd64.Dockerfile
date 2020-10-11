@@ -71,8 +71,8 @@ RUN apk add --no-cache --update-cache \
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	gcc=10.2.0-r5 \
-	musl=1.2.1-r1
+	gcc \
+	musl
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -305,7 +305,7 @@ RUN set -eux && \
 	apk upgrade --no-cache --update-cache && \
 	echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
 	apk add --no-cache --update-cache \
-		musl=1.2.1-r1 && \
+		musl && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*

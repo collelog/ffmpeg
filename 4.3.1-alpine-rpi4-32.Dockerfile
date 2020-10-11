@@ -1,8 +1,8 @@
 # FFmpeg
 FROM collelog/buildenv:alpine AS ffmpeg-build
 
-ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib:/lib
-ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
+ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/local/lib:/usr/lib:/lib
+ENV PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig
 ENV SRC=/usr/local
 ENV PREFIX=/usr/local
 
@@ -74,8 +74,8 @@ RUN apk add --no-cache --update-cache \
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	gcc=10.2.0-r5 \
-	musl=1.2.1-r1
+	gcc \
+	musl
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -206,7 +206,7 @@ RUN  \
 		--disable-thumb \
 		--enable-avisynth \
 		--enable-avresample \
-		--enable-chromaprint \
+#		--enable-chromaprint \
 		--enable-fontconfig \
 		--enable-frei0r \
 		--enable-gpl \
@@ -228,7 +228,7 @@ RUN  \
 		--enable-libfribidi \
 		--enable-libgme \
 		--enable-libgsm \
-#		--enable-libiec61883 \
+##		--enable-libiec61883 \
 		--enable-libjack \
 		--enable-libkvazaar \
 		--enable-libmp3lame \
@@ -240,7 +240,7 @@ RUN  \
 		--enable-libopus \
 		--enable-libpulse \
 		--enable-librsvg \
-		--enable-librubberband \
+#		--enable-librubberband \
 		--enable-libshine \
 		--enable-libsnappy \
 		--enable-libsoxr \
@@ -260,8 +260,8 @@ RUN  \
 		--enable-libxml2 \
 		--enable-libxvid \
 		--enable-libzmq \
-#		--enable-libzvbi \
-		--enable-lv2 \
+##		--enable-libzvbi \
+#		--enable-lv2 \
 		--enable-nonfree \
 		--enable-openal \
 		--enable-opengl \
@@ -270,16 +270,16 @@ RUN  \
 		--enable-sdl2 \
 		--enable-shared \
 		--enable-version3 \
-		--extra-cflags="-I${PREFIX}/include ${CFLAGS}" \
-		--extra-cxxflags="-I${PREFIX}/include ${CXXFLAGS}" \
+		--extra-cflags="-I${PREFIX}/include -I/opt/vc/include/IL ${CFLAGS}" \
+		--extra-cxxflags="-I${PREFIX}/include -I/opt/vc/include/IL ${CXXFLAGS}" \
 		--extra-ldflags="-L${PREFIX}/lib" \
 		--extra-libs="-lpthread -lm" \
 		--prefix="${PREFIX}" \
 		\
-#		--enable-mmal \
+		--enable-mmal \
 #		--enable-neon \
-#		--enable-omx \
-#		--enable-omx-rpi \
+		--enable-omx \
+		--enable-omx-rpi \
 #		--enable-vfp \
 		--enable-v4l2_m2m && \
 	make -j $(nproc) && \
@@ -307,7 +307,7 @@ RUN rm -rf /tmp/* /var/cache/apk/*
 FROM alpine:3.12 AS release
 LABEL maintainer "collelog <collelog.cavamin@gmail.com>"
 
-ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib:/lib
+ENV LD_LIBRARY_PATH=/opt/vc/lib:/usr/local/lib:/usr/lib:/lib
 
 COPY --from=ffmpeg-build /build /
 COPY --from=ffmpeg-build /build /build
@@ -318,7 +318,7 @@ RUN set -eux && \
 		raspberrypi-libs && \
 	echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
 	apk add --no-cache --update-cache \
-		musl=1.2.1-r1 && \
+		musl && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*

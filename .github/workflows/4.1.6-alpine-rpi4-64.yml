@@ -1,4 +1,4 @@
-name: 0p1pp1-4.2-alpine-rpi4-arm64v8
+name: 4.1.6-alpine-rpi4-64
 
 on: [ workflow_dispatch ]
 
@@ -29,8 +29,8 @@ jobs:
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --platform linux/arm64 \
             --output "type=image,push=false" \
-            --tag collelog/ffmpeg:0p1pp1-4.2-alpine-rpi4-arm64v8 \
-            --file ./0p1pp1-4.2-alpine-rpi4-arm64v8.Dockerfile ./
+            --tag collelog/ffmpeg:4.1.6-alpine-rpi4-64 \
+            --file ./4.1.6-alpine-rpi4-64.Dockerfile ./
       -
         name: Docker Login
         env:
@@ -45,12 +45,12 @@ jobs:
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --platform linux/arm64 \
             --output "type=image,push=true" \
-            --tag collelog/ffmpeg:0p1pp1-4.2-alpine-rpi4-arm64v8 \
-            --file ./0p1pp1-4.2-alpine-rpi4-arm64v8.Dockerfile ./
+            --tag collelog/ffmpeg:4.1.6-alpine-rpi4-64 \
+            --file ./4.1.6-alpine-rpi4-64.Dockerfile ./
       -
         name: Docker Check Manifest
         run: |
-          docker run --rm mplatform/mquery collelog/ffmpeg:0p1pp1-4.2-alpine-rpi4-arm64v8
+          docker run --rm mplatform/mquery collelog/ffmpeg:4.1.6-alpine-rpi4-64
       -
         name: Clear
         if: always()

@@ -74,8 +74,8 @@ RUN apk add --no-cache --update-cache \
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	gcc=10.2.0-r5 \
-	musl=1.2.1-r1
+	gcc \
+	musl
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -116,6 +116,16 @@ RUN \
 		tar -zx --strip-components=1 && \
 	./autogen.sh && \
 	./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
+	make -j $(nproc) && \
+	make -j $(nproc) install
+
+## libaribb24 https://github.com/nkoriyama/aribb24/
+WORKDIR /tmp/aribb24
+RUN \
+	curl -fsSL https://github.com/nkoriyama/aribb24/tarball/master | \
+		tar -xz --strip-components=1 && \
+	autoreconf -fiv && \
+	./configure --prefix="${PREFIX}" && \
 	make -j $(nproc) && \
 	make -j $(nproc) install
 
@@ -185,7 +195,7 @@ ENV CXXFLAGS="-O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
 WORKDIR /tmp/ffmpeg
 RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
-	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.1.6.tar.bz2 | \
+	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.2.4.tar.bz2 | \
 		tar -jx --strip-components=1 && \
 	./configure \
 		--disable-debug \
@@ -202,6 +212,7 @@ RUN  \
 		--enable-gpl \
 		--enable-ladspa \
 		--enable-libaom \
+		--enable-libaribb24 \
 		--enable-libass \
 		--enable-libbluray \
 		--enable-libbs2b \
@@ -307,7 +318,7 @@ RUN set -eux && \
 		raspberrypi-libs && \
 	echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
 	apk add --no-cache --update-cache \
-		musl=1.2.1-r1 && \
+		musl && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*

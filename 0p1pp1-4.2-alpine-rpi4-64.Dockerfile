@@ -74,8 +74,8 @@ RUN apk add --no-cache --update-cache \
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	gcc=10.2.0-r5 \
-	musl=1.2.1-r1
+	gcc \
+	musl
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -191,12 +191,12 @@ RUN \
 ENV CFLAGS="-O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
 ENV CXXFLAGS="-O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72"
 
-## ffmpeg https://ffmpeg.org/
+## 0p1pp1/FFmpeg https://github.com/0p1pp1/FFmpeg/
 WORKDIR /tmp/ffmpeg
 RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
-	curl -fsSL https://ffmpeg.org/releases/ffmpeg-4.2.4.tar.bz2 | \
-		tar -jx --strip-components=1 && \
+	curl -fsSL https://github.com/0p1pp1/FFmpeg/tarball/isdb-4.2 | \
+		tar -xz --strip-components=1 && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
@@ -318,7 +318,7 @@ RUN set -eux && \
 		raspberrypi-libs && \
 	echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
 	apk add --no-cache --update-cache \
-		musl=1.2.1-r1 && \
+		musl && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*

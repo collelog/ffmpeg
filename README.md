@@ -1,7 +1,20 @@
-# Docker build for FFmpeg on Alpine Linux
-Docker build for FFmpeg on Alpine Linux. Enable Hardware Encoding and GCC optimization.
+# Docker build for FFmpeg on Alpine Linux  
+
+## FFmpeg Build Environment
+- Alpine Linux 3.12.0
+- gcc 10.2.0
+- musl 1.2.1
 
 ## Tags
+[![image-size-4.3.1-alpine-amd64](https://img.shields.io/docker/image-size/collelog/ffmpeg/4.3.1-alpine-amd64?label=4.3.1-alpine-amd64)](https://hub.docker.com/r/collelog/ffmpeg/tags?page=1&name=4.3.1-alpine-amd64)
+[![image-size-4.3.1-alpine-vaapi-amd64](https://img.shields.io/docker/image-size/collelog/ffmpeg/4.3.1-alpine-vaapi-amd64?label=4.3.1-alpine-vaapi-amd64)](https://hub.docker.com/r/collelog/ffmpeg/tags?page=1&name=4.3.1-alpine-vaapi-amd64)
+[![image-size-4.3.1-rpi4-64](https://img.shields.io/docker/image-size/collelog/ffmpeg/4.3.1-alpine-rpi4-64?label=4.3.1-alpine-rpi4-64)](https://hub.docker.com/r/collelog/ffmpeg/tags?page=1&name=4.3.1-alpine-rpi4-64)
+[![image-size-4.3.1-rpi4-32](https://img.shields.io/docker/image-size/collelog/ffmpeg/4.3.1-alpine-rpi4-32?label=4.3.1-alpine-rpi4-32)](https://hub.docker.com/r/collelog/ffmpeg/tags?page=1&name=4.3.1-alpine-rpi4-32)
+[![image-size-4.3.1-rpi3](https://img.shields.io/docker/image-size/collelog/ffmpeg/4.3.1-alpine-rpi3?label=4.3.1-alpine-rpi3)](https://hub.docker.com/r/collelog/ffmpeg/tags?page=1&name=4.3.1-alpine-rpi3)
+[![image-size-4.3.1-arm64v8](https://img.shields.io/docker/image-size/collelog/ffmpeg/4.3.1-alpine-arm64v8?label=4.3.1-alpine-arm64v8)](https://hub.docker.com/r/collelog/ffmpeg/tags?page=1&name=4.3.1-alpine-arm64v8)
+[![image-size-4.3.1-arm32v7](https://img.shields.io/docker/image-size/collelog/ffmpeg/4.3.1-alpine-arm32v7?label=4.3.1-alpine-arm32v7)](https://hub.docker.com/r/collelog/ffmpeg/tags?page=1&name=4.3.1-alpine-arm32v7)
+[![image-size-4.3.1-arm32v6](https://img.shields.io/docker/image-size/collelog/ffmpeg/4.3.1-alpine-arm32v6?label=4.3.1-alpine-arm32v6)](https://hub.docker.com/r/collelog/ffmpeg/tags?page=1&name=4.3.1-alpine-arm32v6)
+
 ### FFmpeg
 - 4.3.1 (Tags: 4.3.1-[os]-[architecture])
 - 4.2.4 (Tags: 4.2.4-[os]-[architecture])
@@ -16,21 +29,27 @@ Docker build for FFmpeg on Alpine Linux. Enable Hardware Encoding and GCC optimi
 - arm64v8 (Tags: [ffmpeg]-[os]-arm64v8)
 - arm32v7 (Tags: [ffmpeg]-[os]-arm32v7)
 - arm32v6 (Tags: [ffmpeg]-[os]-arm32v6)
+- Raspberry Pi 4B  
+ - 64bit OS (Tags: [ffmpeg]-[os]-rpi4-64)
+ - 32bit OS (Tags: [ffmpeg]-[os]-rpi4-32)
+- Raspberry Pi 3B (Tags: [ffmpeg]-[os]-rpi3)
 
 ### Hardware Acceleration
-- VA-API, Intel QSV:Intel Media SDK (Tags: [ffmpeg]-[os]-vaapi-amd64)
+- x86-64
+ - VA-API, Intel QSV:Intel Media SDK (Tags: [ffmpeg]-[os]-vaapi-amd64)
 - Raspberry Pi 4B  
- - 64bit OS (Tags: [ffmpeg]-[os]-rpi4-arm64v8)
- - 32bit OS (Tags: [ffmpeg]-[os]-rpi4-arm32v7)
-- Raspberry Pi 3B (Tags: [ffmpeg]-[os]-rpi3-arm32v7)
-
+ - 64bit OS (Tags: [ffmpeg]-[os]-rpi4-64)
+ - 32bit OS (Tags: [ffmpeg]-[os]-rpi4-32)
+- Raspberry Pi 3B (Tags: [ffmpeg]-[os]-rpi3)
 
 ### GCC optimization
-- x86-64 (Tags: [ffmpeg]-[os]-amd64)
+- x86-64
+ - Hardware Acceleration not available (Tags: [ffmpeg]-[os]-amd64)
+ - VA-API, Intel QSV:Intel Media SDK (Tags: [ffmpeg]-[os]-vaapi-amd64)
 - Raspberry Pi 4B  
- - 64bit OS (Tags: [ffmpeg]-[os]-rpi4-arm64v8)
- - 32bit OS (Tags: [ffmpeg]-[os]-rpi4-arm32v7)
-- Raspberry Pi 3B (Tags: [ffmpeg]-[os]-rpi3-arm32v7)
+ - 64bit OS (Tags: [ffmpeg]-[os]-rpi4-64)
+ - 32bit OS (Tags: [ffmpeg]-[os]-rpi4-32)
+- Raspberry Pi 3B (Tags: [ffmpeg]-[os]-rpi3)
 
 
 ## Example of Copy FFmpeg binary and library to base image
@@ -43,6 +62,10 @@ FROM collelog/ffmpeg:4.3.1-alpine-amd64 AS ffmpeg-image
 FROM alpine:3.12.0
 
 COPY --from=ffmpeg-image /build /
+
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+	apk add --no-cache --update-cache \
+		musl
 ```
 
 
@@ -119,10 +142,9 @@ COPY --from=ffmpeg-image /build /
 	--enable-postproc
 	--enable-sdl2
 	--enable-shared
-	--enable-small
 	--enable-version3
-	--extra-cflags=-I/usr/local/include -O2 -march=x86-64 -mtune=generic -fomit-frame-pointer
-	--extra-cxxflags=-I/usr/local/include -O2 -march=x86-64 -mtune=generic -fomit-frame-pointer
+	--extra-cflags=-I/usr/local/include -O2 -pipe -march=x86-64 -mtune=generic
+	--extra-cxxflags=-I/usr/local/include -O2 -pipe -march=x86-64 -mtune=generic
 	--extra-ldflags=-L/usr/local/lib
 	--extra-libs='-lpthread -lm'
 	--prefix=/usr/local
@@ -201,10 +223,9 @@ COPY --from=ffmpeg-image /build /
 	--enable-postproc
 	--enable-sdl2
 	--enable-shared
-	--enable-small
 	--enable-version3
-	--extra-cflags=-I/usr/local/include -O2 -march=x86-64 -mtune=generic -fomit-frame-pointer
-	--extra-cxxflags=-I/usr/local/include -O2 -march=x86-64 -mtune=generic -fomit-frame-pointer
+	--extra-cflags=-I/usr/local/include -O2 -pipe -march=x86-64 -mtune=generic
+	--extra-cxxflags=-I/usr/local/include -O2 -pipe -march=x86-64 -mtune=generic
 	--extra-ldflags=-L/usr/local/lib
 	--extra-libs='-lpthread -lm'
 	--prefix=/usr/local
@@ -214,7 +235,7 @@ COPY --from=ffmpeg-image /build /
 ```
 
 
-- collelog/ffmpeg:4.3.1-alpine-rpi4-arm64v8
+- collelog/ffmpeg:4.3.1-alpine-rpi4-64
 ```
   configuration:
 	--disable-debug
@@ -286,17 +307,16 @@ COPY --from=ffmpeg-image /build /
 	--enable-postproc
 	--enable-sdl2
 	--enable-shared
-	--enable-small
 	--enable-version3
-	--extra-cflags=-I/usr/local/include -O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer
-	--extra-cxxflags=-I/usr/local/include -O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer
+	--extra-cflags=-I/usr/local/include -O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72
+	--extra-cxxflags=-I/usr/local/include -O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72
 	--extra-ldflags=-L/usr/local/lib
 	--extra-libs='-lpthread -lm'
 	--prefix=/usr/local
 	--enable-v4l2_m2m
 ```
 
-- collelog/ffmpeg:4.3.1-alpine-rpi4-arm32v7
+- collelog/ffmpeg:4.3.1-alpine-rpi4-32
 ```
   configuration:
 	--disable-debug
@@ -365,10 +385,9 @@ COPY --from=ffmpeg-image /build /
 	--enable-postproc
 	--enable-sdl2
 	--enable-shared
-	--enable-small
 	--enable-version3
-	--extra-cflags=-I/usr/local/include -I/opt/vc/include/IL -O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits
-	--extra-cxxflags=-I/usr/local/include -I/opt/vc/include/IL -O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits
+	--extra-cflags=-I/usr/local/include -I/opt/vc/include/IL -O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72
+	--extra-cxxflags=-I/usr/local/include -I/opt/vc/include/IL -O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a72
 	--extra-ldflags=-L/usr/local/lib
 	--extra-libs='-lpthread -lm'
 	--prefix=/usr/local
@@ -378,7 +397,7 @@ COPY --from=ffmpeg-image /build /
 	--enable-v4l2_m2m
 ```
 
-- collelog/ffmpeg:4.3.1-alpine-rpi3-arm32v7
+- collelog/ffmpeg:4.3.1-alpine-rpi3
 ```
   configuration:
 	--disable-debug
@@ -444,10 +463,9 @@ COPY --from=ffmpeg-image /build /
 	--enable-postproc
 	--enable-sdl2
 	--enable-shared
-	--enable-small
 	--enable-version3
-	--extra-cflags=-I/usr/local/include -I/opt/vc/include/IL -O2 -march=armv8-a+crc+simd -mtune=cortex-a53 -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits
-	--extra-cxxflags=-I/usr/local/include -I/opt/vc/include/IL -O2 -march=armv8-a+crc+simd -mtune=cortex-a53 -fomit-frame-pointer -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits
+	--extra-cflags=-I/usr/local/include -I/opt/vc/include/IL -O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a53
+	--extra-cxxflags=-I/usr/local/include -I/opt/vc/include/IL -O2 -pipe -march=armv8-a+crc+simd -mtune=cortex-a53
 	--extra-ldflags=-L/usr/local/lib
 	--extra-libs='-lpthread -lm'
 	--prefix=/usr/local
@@ -529,18 +547,17 @@ COPY --from=ffmpeg-image /build /
 	--enable-postproc
 	--enable-sdl2
 	--enable-shared
-	--enable-small
 	--enable-version3
-	--extra-cflags=-I/usr/local/include -O2 -fomit-frame-pointer
-	--extra-cxxflags=-I/usr/local/include -O2 -fomit-frame-pointer
+	--extra-cflags=-I/usr/local/include -O2 -pipe
+	--extra-cxxflags=-I/usr/local/include -O2 -pipe
 	--extra-ldflags=-L/usr/local/lib
 	--extra-libs='-lpthread -lm'
 	--prefix=/usr/local
 	--enable-neon
 ```
 
-- collelog/ffmpeg:4.3.1-alpine-rpi-arm32v6
-- collelog/ffmpeg:4.3.1-alpine-rpi-arm32v7
+- collelog/ffmpeg:4.3.1-alpine-arm32v7
+- collelog/ffmpeg:4.3.1-alpine-arm32v6
 ```
 	--disable-debug
 	--disable-doc
@@ -608,10 +625,9 @@ COPY --from=ffmpeg-image /build /
 	--enable-postproc
 	--enable-sdl2
 	--enable-shared
-	--enable-small
 	--enable-version3
-	--extra-cflags=-I/usr/local/include -O2 -fomit-frame-pointer
-	--extra-cxxflags=-I/usr/local/include -O2 -fomit-frame-pointer
+	--extra-cflags=-I/usr/local/include -O2 -pipe
+	--extra-cxxflags=-I/usr/local/include -O2 -pipe
 	--extra-ldflags=-L/usr/local/lib
 	--extra-libs='-lpthread -lm'
 	--prefix=/usr/local
