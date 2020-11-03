@@ -36,7 +36,7 @@ jobs:
           context: ./
           file: ./0p1pp1-4.3-alpine-vaapi-amd64.Dockerfile
           tags: collelog/ffmpeg:0p1pp1-4.3-alpine-vaapi-amd64
-          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+          platforms: linux/amd64
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
