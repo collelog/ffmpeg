@@ -1,4 +1,4 @@
-name: 0p1pp1-4.3-vaapi-amd64
+name: 0p1pp1-4.3-alpine-vaapi-amd64
 
 on: [ workflow_dispatch ]
 
@@ -29,8 +29,8 @@ jobs:
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
             --platform linux/amd64 \
             --output "type=image,push=false" \
-            --tag collelog/ffmpeg:0p1pp1-4.3-vaapi-amd64 \
-            --file ./0p1pp1-4.3-vaapi-amd64.Dockerfile ./
+            --tag collelog/ffmpeg:0p1pp1-4.3-alpine-vaapi-amd64 \
+            --file ./0p1pp1-4.3-alpine-vaapi-amd64.Dockerfile ./
       -
         name: Docker Login
         env:
@@ -45,8 +45,8 @@ jobs:
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --platform linux/amd64 \
             --output "type=image,push=true" \
-            --tag collelog/ffmpeg:0p1pp1-4.3-vaapi-amd64 \
-            --file ./0p1pp1-4.3-vaapi-amd64.Dockerfile ./
+            --tag collelog/ffmpeg:0p1pp1-4.3-alpine-vaapi-amd64 \
+            --file ./0p1pp1-4.3-alpine-vaapi-amd64.Dockerfile ./
       -
         name: Docker Check Manifest
         run: |
