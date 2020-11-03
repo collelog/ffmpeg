@@ -211,7 +211,7 @@ WORKDIR /tmp/ffmpeg
 RUN  \
 	mkdir -p /build${PREFIX}/bin/ && \
 	curl -fsSL https://github.com/0p1pp1/FFmpeg/tarball/isdb-4.3 | \
-		tar -jx --strip-components=1 && \
+		tar -xz --strip-components=1 && \
 	./configure \
 		--disable-debug \
 		--disable-doc \
