@@ -65,23 +65,21 @@ RUN apk add --no-cache --update-cache \
 	mesa-vdpau-gallium
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	ladspa-dev \
-	libiec61883-dev \
 	libgme-dev \
 	lilv-dev \
 	rubberband-dev \
 	shine \
 	vidstab-dev \
 	\
-	intel-media-driver-dev \
 	libva-vdpau-driver
 
-RUN echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	gcc \
-	musl
+	ladspa-dev \
+#	libiec61883-dev
+	\
+	intel-media-driver
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -318,7 +316,7 @@ RUN rm -rf /tmp/* /var/cache/apk/*
 
 
 # final image
-FROM alpine:3.12.3 AS release
+FROM alpine:3.13.5 AS release
 LABEL maintainer "collelog <collelog.cavamin@gmail.com>"
 
 ENV LD_LIBRARY_PATH=/opt/intel/mediasdk/lib64:/usr/local/lib64:/usr/local/lib:/usr/lib:/lib
@@ -332,14 +330,12 @@ RUN set -eux && \
 		libva-intel-driver \
 		mesa-va-gallium \
 		mesa-vdpau-gallium && \
-	echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
 	echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
 	apk add --no-cache --update-cache \
-		intel-media-driver \
-		libva-vdpau-driver && \
-	echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+		intel-media-driver && \
+	echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
 	apk add --no-cache --update-cache \
-		musl && \
+		libva-vdpau-driver && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*

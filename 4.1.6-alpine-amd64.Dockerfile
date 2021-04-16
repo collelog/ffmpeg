@@ -59,20 +59,17 @@ RUN apk add --no-cache --update-cache \
 	zeromq-dev
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	ladspa-dev \
-	libiec61883-dev \
 	libgme-dev \
 	lilv-dev \
 	rubberband-dev \
 	shine \
 	vidstab-dev
 
-RUN echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	gcc \
-	musl
+	ladspa-dev
+#	libiec61883-dev
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -282,7 +279,7 @@ RUN rm -rf /tmp/* /var/cache/apk/*
 
 
 # final image
-FROM alpine:3.12.3 AS release
+FROM alpine:3.13.5 AS release
 LABEL maintainer "collelog <collelog.cavamin@gmail.com>"
 
 ENV LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib:/lib
@@ -292,9 +289,6 @@ COPY --from=ffmpeg-build /build /build
 
 RUN set -eux && \
 	apk upgrade --no-cache --update-cache && \
-	echo http://dl-2.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
-	apk add --no-cache --update-cache \
-		musl && \
 	\
 	# cleaning
 	rm -rf /tmp/* /var/cache/apk/*
