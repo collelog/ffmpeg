@@ -64,18 +64,21 @@ RUN apk add --no-cache --update-cache \
 	mesa-vdpau-gallium
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	ladspa-dev \
-	libiec61883-dev \
 	libgme-dev \
 	lilv-dev \
 	rubberband-dev \
 	shine \
 	vidstab-dev \
 	\
-	intel-media-driver-dev \
 	libva-vdpau-driver
+
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
+RUN apk add --no-cache --update-cache \
+	ladspa-dev \
+#	libiec61883-dev
+	\
+	intel-media-driver
 
 
 # AviSynth+ https://github.com/AviSynth/AviSynthPlus
@@ -327,7 +330,7 @@ RUN set -eux && \
 		mesa-vdpau-gallium && \
 	echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
 	apk add --no-cache --update-cache \
-		intel-media-driver \
+		intel-media-driver && \
 	echo http://dl-2.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
 	apk add --no-cache --update-cache \
 		libva-vdpau-driver && \
