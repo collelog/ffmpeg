@@ -67,7 +67,8 @@ RUN apk add --no-cache --update-cache \
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	ladspa-dev
+	ladspa-dev \
+	dav1d-dev
 #	libiec61883-dev
 
 
@@ -180,6 +181,15 @@ RUN \
 	make -j $(nproc) && \
 	make -j $(nproc) install
 
+## SVT-AV1 https://github.com/AOMediaCodec/SVT-AV1
+WORKDIR /tmp/svt-av1
+RUN \
+	curl -fsSL https://github.com/AOMediaCodec/SVT-AV1/archive/refs/tags/v0.8.6.tar.gz | \
+		tar -xz --strip-components=1 && \
+	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+	make -j $(nproc) && \
+	make -j $(nproc) install
+
 ENV CFLAGS="-O2 -pipe -march=x86-64 -mtune=generic"
 ENV CXXFLAGS="-O2 -pipe -march=x86-64 -mtune=generic"
 
@@ -211,6 +221,7 @@ RUN  \
 		--enable-libcaca \
 		--enable-libcdio \
 		--enable-libcodec2 \
+		--enable-libdav1d \
 		--enable-libdc1394 \
 		--enable-libdrm \
 		--enable-libfdk_aac \
@@ -239,6 +250,7 @@ RUN  \
 		--enable-libspeex \
 		--enable-libsrt \
 		--enable-libssh \
+		--enable-libsvtav1 \
 		--enable-libtheora \
 		--enable-libtwolame \
 		--enable-libvidstab \
