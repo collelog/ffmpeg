@@ -76,7 +76,7 @@ RUN apk add --no-cache --update-cache \
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
 	ladspa-dev \
-	dav1d-dev
+	dav1d-dev \
 #	libiec61883-dev
 	\
 	intel-media-driver
