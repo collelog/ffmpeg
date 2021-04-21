@@ -67,7 +67,8 @@ RUN apk add --no-cache --update-cache \
 
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
 RUN apk add --no-cache --update-cache \
-	ladspa-dev
+	ladspa-dev \
+	dav1d-dev
 #	libiec61883-dev
 
 
@@ -211,6 +212,7 @@ RUN  \
 		--enable-libcaca \
 		--enable-libcdio \
 		--enable-libcodec2 \
+		--enable-libdav1d \
 		--enable-libdc1394 \
 		--enable-libdrm \
 		--enable-libfdk_aac \
